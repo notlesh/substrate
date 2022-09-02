@@ -296,17 +296,20 @@ pub mod pallet {
 
 		/// Update the multiplier of the next block, based on the previous block's weight.
 		type FeeMultiplierUpdate: MultiplierUpdate;
+
+		/// Initial value for multiplier
+		type InitialMultiplier: Get<Multiplier>;
 	}
 
 	#[pallet::type_value]
-	pub fn NextFeeMultiplierOnEmpty() -> Multiplier {
-		Multiplier::saturating_from_integer(1)
+	pub fn NextFeeMultiplierOnEmpty<T: Config>() -> Multiplier {
+		T::InitialMultiplier::get()
 	}
 
 	#[pallet::storage]
 	#[pallet::getter(fn next_fee_multiplier)]
 	pub type NextFeeMultiplier<T: Config> =
-		StorageValue<_, Multiplier, ValueQuery, NextFeeMultiplierOnEmpty>;
+		StorageValue<_, Multiplier, ValueQuery, NextFeeMultiplierOnEmpty<T>>;
 
 	#[pallet::storage]
 	pub(super) type StorageVersion<T: Config> = StorageValue<_, Releases, ValueQuery>;
